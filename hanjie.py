@@ -7,4 +7,4 @@ if __name__ == "__main__":
     grid = generateGrid()
     labelsX, labelsY = checkLabel(grid)
     display(grid, labelsX, labelsY)
-    binarise();
+    binarise()

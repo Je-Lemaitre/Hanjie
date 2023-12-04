@@ -1,5 +1,6 @@
 import tkinter as tk
 from checkLabel import checkLabel
+from hint import hint_button, handle_hint_click
 
 win = False
 
@@ -73,6 +74,12 @@ def display(grid, labelsX, labelsY):
             case_button.grid(row=y+sizeLabY, column=x+sizeLabX)
             row.append(case_button)
         buttons.append(row)
+
+    # Create a button to get a hint
+    hint_button1 = hint_button(window, cases, grid, buttons)
+    hint_button1.bind("<Button-1>", lambda event: handle_hint_click(cases, grid, buttons))  # Left click
+    hint_button1.grid(row=0, column=0)
+
 
     # Start the Tkinter main loop
     window.mainloop()
