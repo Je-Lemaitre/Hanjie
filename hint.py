@@ -35,7 +35,7 @@ def handle_hint_click(cases, grid, buttons):
         button.config(bg="green")
 
 
-def hint_button(window, cases, grid, buttons):
+def hint_button(window):
     button = tk.Button(window, text="Hint", width=3, height=3,
                        bg="light gray", highlightthickness=2, highlightcolor="white",
                        activebackground="light gray")
