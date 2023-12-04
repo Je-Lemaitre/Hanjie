@@ -41,7 +41,7 @@ def display(grid, labelsX, labelsY):
     window = tk.Tk()
     window.title("Hanjie Game")
 
-    # Create a 3x3 grid of cases
+    # Create a 3x3 grid of cells
     cases = [[" " for _ in range(sizeX)] for _ in range(sizeY)]
     buttons = []
 

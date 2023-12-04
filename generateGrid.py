@@ -1,4 +1,4 @@
-def generateGrid():
+def generateGrid(gridSize):
 
     o='o'
     x='x'

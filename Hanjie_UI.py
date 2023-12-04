@@ -1,6 +1,7 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk
+from PIL import Image
 from datetime import datetime
+import hanjie
 
 ctk.set_default_color_theme("dark-blue")
 
@@ -84,6 +85,17 @@ class HanjieHomePage(ctk.CTk):
             print("Error: Please enter your pseudonym before starting the game.")
             return
 
+
+        if theme == "random" :
+            img = "pictures/donald.png"
+            print("random")
+        if theme == "Cartoon" :
+            img = "pictures/donald.png"
+            print("Cartoon")
+        img = "pictures/donald.png"
+        nbLines, nbColumns = grid_size.split("x")
+        grid = (int(nbLines), int(nbColumns))
+        hanjie.start_game(difficulty, grid, img)
         # Add the code to launch the game with selected difficulty, grid size, and theme
         # Here is a result, for example
         result = 1000  # Replace with actual game result

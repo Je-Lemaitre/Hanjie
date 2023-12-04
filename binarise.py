@@ -15,8 +15,8 @@ def find_bounding_box(image):
 
     return (left-20, top-20, right + 21, bottom + 21)
 
-def binarise():
-    image_path = 'image/donald.png'
+def binarise(img):
+    image_path = img
     image = Image.open(image_path)
 
     image_data = image.convert('L').point(lambda x: 0 if x < 128 else 255)
