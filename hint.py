@@ -6,13 +6,9 @@ import tkinter as tk
 def hint_position(grid, player_cases):
     correct_positions = grid_to_positions(grid)
     player_positions = grid_to_positions(player_cases)
-    print("correct",correct_positions, "\n")
-    print("player",player_positions, "\n")
     possible_hints = [position for position in correct_positions if position not in player_positions]
-    print("possible_hints",possible_hints)
     if len(possible_hints) > 0:  # If at lest one correct square is not found
         random_hint = random.choice(possible_hints)
-        print("random_hint",random_hint)
         return random_hint
     else:
         return []
@@ -29,11 +25,9 @@ def grid_to_positions(grid):
 
 
 def handle_hint_click(cases, grid, buttons):
-    print("click")
     hint = hint_position(grid, cases)
     #vérifier que hint est de la forme [x,y]
     if len(hint) == 0:
-        print("no hint")
         return
     else :
         button = buttons[hint[1]][hint[0]]
