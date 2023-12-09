@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk  # Import ImageTk from PIL
 from datetime import datetime
-import hanjie
+#import hanjie
 import grid_board_selection as gbs
 from os import listdir
 from os.path import join
@@ -89,7 +89,7 @@ class HanjieHomePage(tk.Tk):
 
         nbLines, nbColumns = grid_size.split("x")
         grid = (int(nbLines), int(nbColumns))
-        hanjie.start_game(difficulty, grid, img)
+        #hanjie.start_game(difficulty, grid, img)
         result = 1000
         date = datetime.now().strftime("%Y-%m-%d %H:%M")
 
