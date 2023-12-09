@@ -6,8 +6,8 @@ from tkinter import ttk
 MIN_SIZE = 5
 MAX_SIZE = 40
 
-DEFAULT_WIDTH = 15
-DEFAULT_HEIGHT = 10
+DEFAULT_WIDTH = 5
+DEFAULT_HEIGHT = 5
 
 EASY_GRID_SIZE = 10
 MEDIUM_GRID_SIZE = 15
@@ -15,25 +15,34 @@ DIFFICULT_GRID_SIZE = 20
 HARD_GRID_SIZE = 25
 
 
-class MyWindow:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Grid board selection")
+class GridBoardSelectionWindow(tk.Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("Grid board selection")
+        self.width = 5
+        self.height = 5
+
 
         """
         Frame declaration
         """
-        frame_width = ttk.Frame(root, padding="10")
+        frame_width = ttk.Frame(self, padding="10")
         frame_width.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        frame_height = ttk.Frame(root, padding="10")
+        frame_height = ttk.Frame(self, padding="10")
         frame_height.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
-        frame_tableau = ttk.Frame(root, padding="10")
+        frame_tableau = ttk.Frame(self, padding="10")
         frame_tableau.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
-        frame_radio = ttk.Frame(root, padding="10")
+        frame_radio = ttk.Frame(self, padding="10")
         frame_radio.grid(row=1, column=1, rowspan=2, padx=10, pady=10, sticky="nsew")
+
+        frame_validate = ttk.Frame(self, padding="10")
+        frame_validate.grid(row=2, column=0, padx=10, pady=10, sticky="ne")
+
+        frame_exit = ttk.Frame(self, padding="10")
+        frame_exit.grid(row=2, column=1, padx=10, pady=10, sticky="ne")
 
         self.canvas = tk.Canvas(frame_tableau, width=400, height=400, borderwidth=1, relief="solid")
         self.canvas.pack()
@@ -78,6 +87,12 @@ class MyWindow:
         radio4 = ttk.Radiobutton(frame_radio, text="Hard", variable=self.radio_var, value="Hard",
                                  command=self.set_cursors_value)
         radio4.pack(anchor="w")
+
+        validate_button = tk.Button(frame_validate, text="Validate", command=self.validate_gridSize, width=20, height=2)
+        validate_button.pack(pady=10)
+
+        cancel_button = tk.Button(frame_exit, text="Cancel", command=self.cancel_gridSize, width=20, height=2)
+        cancel_button.pack(pady=10)
 
         self.update_table()
 
@@ -135,8 +150,16 @@ class MyWindow:
             y = i * cell_height
             self.canvas.create_line(0, y, columns * 10, y, fill="black")
 
+    def cancel_gridSize(self):
+        self.destroy()
+
+    def validate_gridSize(self):
+        self.height = int(self.scale1.get())
+        self.width = int(self.scale2.get())
+        self.destroy()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = MyWindow(root)
+    app = GridBoardSelectionWindow(root)
     root.mainloop()

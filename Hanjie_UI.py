@@ -87,8 +87,8 @@ class HanjieHomePage(tk.Tk):
         else:
             img = join(mypath, rd.choice(imgs))
 
-        nbLines, nbColumns = grid_size.split("x")
-        grid = (int(nbLines), int(nbColumns))
+        nbwidth, nbheight = grid_size.split("x")
+        grid = (int(nbwidth), int(nbheight))
         #hanjie.start_game(difficulty, grid, img)
         result = 1000
         date = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -130,14 +130,50 @@ class GameConfigWindow(tk.Toplevel):
         self.difficulty_combobox.set(difficulty_options[0])
         self.difficulty_combobox.pack(pady=10)
 
-        grid_size_label = tk.Label(self, text="Select Grid Size:", font=("Helvetica", 12))
-        grid_size_label.pack(pady=5)
+        # grid_size_label = tk.Label(self, text="Select Grid Size:", font=("Helvetica", 12))
+        # grid_size_label.pack(pady=5)
+        #
+        # self.grid_size_entry = tk.Entry(self)
+        # self.grid_size_entry.pack(pady=10)
+        # self.grid_size_entry.insert(0, "10x10")
+        # grid_select_button = tk.Button(self, text="Grid Selection", command=self.selectGrid, width=20, height=2)
+        # grid_select_button.pack(pady=10)
 
-        self.grid_size_entry = tk.Entry(self)
-        self.grid_size_entry.pack(pady=10)
-        self.grid_size_entry.insert(0, "10x10")
-        grid_select_button = tk.Button(self, text="Grid Selection", command=self.selectGrid, width=20, height=2)
-        grid_select_button.pack(pady=10)
+        # Create a frame for grid-related options
+        options_frame = tk.Frame(self, padx=10, pady=10)
+        options_frame.pack(padx=10, pady=10)
+
+        # Create a frame for grid selection
+        grid_selection_frame = tk.Frame(options_frame, padx=10, pady=10, borderwidth=2, relief="groove")
+        grid_selection_frame.grid(row=0, column=0, columnspan=4, pady=10)
+
+        # Create labels, entry boxes, and buttons for height
+        tk.Label(grid_selection_frame, text="Height:").grid(row=0, column=0, padx=5, pady=5)
+        self.height_entry = tk.Entry(grid_selection_frame)
+        self.height_entry.insert(0, 5)  # Set default value
+        self.height_entry.grid(row=0, column=1, padx=5, pady=5)
+        height_increment_button = tk.Button(grid_selection_frame, text="▲", command=lambda: self.update_height(1))
+        height_increment_button.grid(row=0, column=2, padx=5, pady=5)
+        height_decrement_button = tk.Button(grid_selection_frame, text="▼", command=lambda: self.update_height(-1))
+        height_decrement_button.grid(row=0, column=3, padx=5, pady=5)
+
+        # Create labels, entry boxes, and buttons for width
+        tk.Label(grid_selection_frame, text="Width:").grid(row=1, column=0, padx=5, pady=5)
+        self.width_entry = tk.Entry(grid_selection_frame)
+        self.width_entry.insert(0, 5)  # Set default value
+        self.width_entry.grid(row=1, column=1, padx=5, pady=5)
+        width_increment_button = tk.Button(grid_selection_frame, text="▲", command=lambda: self.update_width(1))
+        width_increment_button.grid(row=1, column=2, padx=5, pady=5)
+        width_decrement_button = tk.Button(grid_selection_frame, text="▼", command=lambda: self.update_width(-1))
+        width_decrement_button.grid(row=1, column=3, padx=5, pady=5)
+
+        # Create a button to trigger the grid creation
+        create_button = tk.Button(options_frame, text="Grid Creator", command=self.grid_creator)
+        create_button.grid(row=1, column=0, columnspan=4, pady=10)
+
+        # Create a frame to display the grid
+        grid_frame = tk.Frame(self, padx=10, pady=10)
+        grid_frame.pack(padx=10, pady=10)
 
         theme_label = tk.Label(self, text="Select Theme:", font=("Helvetica", 12))
         theme_label.pack(pady=5)
@@ -157,15 +193,38 @@ class GameConfigWindow(tk.Toplevel):
         )
         exit_config_button.pack(pady=10)
 
-    def selectGrid(self):
-        root = tk.Tk()
-        app = gbs.MyWindow(root)
-        root.mainloop()
+    def update_width(self, action):
+        current_value = self.width_entry.get()
+        if current_value.isdigit():
+            new_value = int(current_value) + action
+            if new_value > 0:
+                self.width_entry.delete(0, tk.END)
+                self.width_entry.insert(0, new_value)
 
+    def update_height(self, action):
+        current_value = self.height_entry.get()
+        if current_value.isdigit():
+            new_value = int(current_value) + action
+            if new_value > 0:
+                self.height_entry.delete(0, tk.END)
+                self.height_entry.insert(0, new_value)
+
+    def grid_creator(self):
+        # Retrieve values from entry boxes
+        gridSlection_window = gbs.GridBoardSelectionWindow(self)
+        gridSlection_window.focus_force()
+        gridSlection_window.wait_window()
+        
+        height = gridSlection_window.height
+        width = gridSlection_window.width
+
+        self.update_height(height - int(self.height_entry.get()))
+        self.update_width(width - int(self.width_entry.get()))
+        
 
     def launch_game(self):
         difficulty = self.difficulty_combobox.get()
-        grid_size = self.grid_size_entry.get()
+        grid_size = (int(self.width_entry.get()),int(self.height_entry.get()))
         theme = self.theme_combobox.get()
 
         self.master.start_game(difficulty, grid_size, theme)
