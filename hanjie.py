@@ -13,7 +13,8 @@ def start_game(difficulty,gridSize, img):
 if __name__ == "__main__":
     #grid = generateGrid()
 
-    grid = binarise('pictures/donald.png')
+    path = loadImage()
+    grid = binarise(path)
     #grid = binarise('pictures/mickey.jpg')
     #grid = binarise('pictures/zelda_1.jpg')
     #grid = binarise('pictures/panda.webp')
