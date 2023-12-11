@@ -7,7 +7,7 @@ from PIL.Image import fromarray
 
 src = None
 max_kernel_size = 20
-max_image_size = 21
+max_image_size = 20
 title_trackbar_kernel_size = 'Kernel size'
 title_trackbar_image_size = 'Image size'
 title_window = 'Adjust parameters!'
@@ -36,13 +36,7 @@ def find_bounding_box(image):
 
     return (left-1, top-1, right + 1, bottom + 1)
 
-
-def binarise(img):
-    image_path = img
-    image = Image.open(image_path)
-
 def processImage(src_erosion, image_size):
-
 
     # LOAD IMAGE, CROP, RESCALE
     ##############################
@@ -53,8 +47,8 @@ def processImage(src_erosion, image_size):
     src_cropped = src_data.crop(bbox)
 
     new_width, new_height = src_cropped.size
-    scale = 1920/1080
-    ratio = max(new_width/image_size*scale, new_height/image_size)
+    scale = 2.3
+    ratio = max(new_width/image_size, new_height/image_size*scale)
     src_rescaled = src_cropped.resize((int(new_width/ratio), int(new_height/ratio)))
 
     src_rescaled = src_rescaled.convert('L').point(lambda x: 0 if x < 128 else 255)
