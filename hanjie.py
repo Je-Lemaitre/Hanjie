@@ -2,6 +2,7 @@ from generateGrid import generateGrid
 from checkLabel import checkLabel
 from display import display
 from binarise import binarise
+from loadImage import loadImage
 
 def start_game(difficulty,gridSize, img):
     grid = generateGrid(gridSize)
