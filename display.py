@@ -1,6 +1,5 @@
 import tkinter as tk
 from checkLabel import checkLabel
-from hint import hint_button, handle_hint_click
 
 win = False
 
@@ -26,7 +25,7 @@ def handle_case_click(x, y, cases, buttons, labelsX, labelsY, event):
         print("YAAAY")
 
 # Function to display the GUI
-def display(grid, labelsX, labelsY):
+def display(grid, labelsX, labelsY, size):
 
     sizeLabX = 0
     for labelX in labelsX:
@@ -42,28 +41,28 @@ def display(grid, labelsX, labelsY):
     window = tk.Tk()
     window.title("Hanjie Game")
 
-    # Create a 3x3 grid of cells
+    # Create a 3x3 grid of cases
     cases = [[" " for _ in range(sizeX)] for _ in range(sizeY)]
     buttons = []
 
     # Create labels for column headers (numbers on top)
     for x in range(sizeX):
         for y in range(len(labelsY[x])):
-            label = tk.Label(window, text=str(labelsY[x][len(labelsY[x])-1-y]), width=5, height=2)
+            label = tk.Label(window, text=str(labelsY[x][len(labelsY[x])-1-y]), width=3*size, height=2*size)
             label.grid(row=sizeLabY-1-y, column=x+sizeLabX)
 
     # Create labels for row headers (numbers on the left)
     for y in range(sizeY):
         for x in range(len(labelsX[y])):
-            label = tk.Label(window, text=str(labelsX[y][len(labelsX[y])-1-x]), width=5, height=2)
+            label = tk.Label(window, text=str(labelsX[y][len(labelsX[y])-1-x]), width=3*size, height=2*size)
             label.grid(row=y+sizeLabY, column=sizeLabX-1-x)
 
     # Create buttons for the cases
     for y in range(sizeY):
         row = []
         for x in range(sizeX):
-            case_button = tk.Button(window, text=cases[y][x], width=5, height=3,
-                                    bg="light gray", highlightthickness=2, highlightcolor="white",
+            case_button = tk.Button(window, text=cases[y][x], width=3*size, height=2*size,
+                                    bg="light gray", highlightthickness=1*size, highlightcolor="white",
                                     activebackground="light gray")
 
             # Bind left and right click event handlers to the button
@@ -75,11 +74,15 @@ def display(grid, labelsX, labelsY):
             row.append(case_button)
         buttons.append(row)
 
-    # Create a button to get a hint
-    hint_button1 = hint_button(window, cases, grid, buttons)
-    hint_button1.bind("<Button-1>", lambda event: handle_hint_click(cases, grid, buttons))  # Left click
-    hint_button1.grid(row=0, column=0)
+    for i in range(int((sizeX-1)/5)):
+        for j in range(sizeY):
+            frame = tk.Frame(window, width=2, height=48, borderwidth=2, relief="solid")
+            frame.grid(row=sizeLabY+j, column=4+sizeLabX+i*5, columnspan=2)
 
+    for i in range(int((sizeY-1)/5)):
+        for j in range(sizeX):
+            frame = tk.Frame(window, width=52, height=2, borderwidth=3, relief="solid")
+            frame.grid(row=4+sizeLabY+i*5, column=sizeLabX+j, columnspan=1, sticky="s")
 
     # Start the Tkinter main loop
     window.mainloop()
