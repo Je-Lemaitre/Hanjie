@@ -2,18 +2,28 @@ import tkinter as tk
 from tkinter import filedialog
 import cv2 as cv
 from PIL import Image, ImageTk
+from display import display
+from checkLabel import checkLabel
 
 adjusted_image = None
-
+root = None
 
 def loadImage():
     """
     Open a selection window to let user choose the image to binarise. 
     """
+    global root
+
     file_path = filedialog.askopenfilename(title="Select a file", initialdir="pictures")
     if file_path:
+
         print("Selected file (path): ", file_path)
-        print(showBinarizedImage(file_path))
+        grid = showBinarizedImage(file_path)
+
+        labelsX, labelsY = checkLabel(grid)
+
+        for i, row in enumerate(grid): print(i, row)
+        display(grid, labelsX, labelsY, 1)
 
     
 
@@ -77,6 +87,7 @@ def showBinarizedImage(image_path):
         tk_updated_image = ImageTk.PhotoImage(Image.fromarray(adjusted_image))
         image_label.config(image=tk_updated_image, width=2* initial_display_size[0], height=2* initial_display_size[1])
         image_label.image = tk_updated_image  
+        
 
     close_button = tk.Button(window, text="Close", command=window.destroy)
     close_button.pack()
@@ -85,6 +96,8 @@ def showBinarizedImage(image_path):
 
 
     final_grid = convert_to_grid(adjusted_image) # insert HERE the image
+
+    
     return final_grid
 
 
