@@ -2,6 +2,8 @@ import tkinter as tk
 from checkLabel import checkLabel
 
 win = False
+WIDTH_FACTOR = 1
+HEIGHT_FACTOR = 2
 
 # Function to handle the click on a case
 def handle_case_click(x, y, cases, buttons, labelsX, labelsY, event):
@@ -48,20 +50,20 @@ def display(grid, labelsX, labelsY, size):
     # Create labels for column headers (numbers on top)
     for x in range(sizeX):
         for y in range(len(labelsY[x])):
-            label = tk.Label(window, text=str(labelsY[x][len(labelsY[x])-1-y]), width=3*size, height=2*size)
-            label.grid(row=sizeLabY-1-y, column=x+sizeLabX)
+            label = tk.Label(window, text=str(labelsY[x][len(labelsY[x])-1-y]), width=WIDTH_FACTOR*size, height=HEIGHT_FACTOR*size)
+            label.grid(row=sizeLabY-1-y, column=x+sizeLabX, padx=1, pady=1)
 
     # Create labels for row headers (numbers on the left)
     for y in range(sizeY):
         for x in range(len(labelsX[y])):
-            label = tk.Label(window, text=str(labelsX[y][len(labelsX[y])-1-x]), width=3*size, height=2*size)
-            label.grid(row=y+sizeLabY, column=sizeLabX-1-x)
+            label = tk.Label(window, text=str(labelsX[y][len(labelsX[y])-1-x]), width=WIDTH_FACTOR*size, height=HEIGHT_FACTOR*size)
+            label.grid(row=y+sizeLabY, column=sizeLabX-1-x, padx=1, pady=1)
 
     # Create buttons for the cases
     for y in range(sizeY):
         row = []
         for x in range(sizeX):
-            case_button = tk.Button(window, text=cases[y][x], width=3*size, height=2*size,
+            case_button = tk.Button(window, text=cases[y][x], width=WIDTH_FACTOR*size, height=HEIGHT_FACTOR*size,
                                     bg="light gray", highlightthickness=1*size, highlightcolor="white",
                                     activebackground="light gray")
 
@@ -70,7 +72,7 @@ def display(grid, labelsX, labelsY, size):
             case_button.bind("<Button-2>", lambda event, x=x, y=y: handle_case_click(x, y, cases, buttons, labelsX, labelsY, "middle"))  # Right click
             case_button.bind("<Button-3>", lambda event, x=x, y=y: handle_case_click(x, y, cases, buttons, labelsX, labelsY, "right"))  # Right click
 
-            case_button.grid(row=y+sizeLabY, column=x+sizeLabX)
+            case_button.grid(row=y+sizeLabY, column=x+sizeLabX, padx=1, pady=1)
             row.append(case_button)
         buttons.append(row)
 
