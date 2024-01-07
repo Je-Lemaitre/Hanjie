@@ -1,16 +1,16 @@
 from __future__ import print_function
+from PIL.Image import fromarray
 import cv2 as cv
 import numpy as np
-import argparse
-from PIL import Image, ImageFilter, ImageOps
-from PIL.Image import fromarray
+import tkinter as tk
+from PIL import Image, ImageTk
 
 src = None
-max_kernel_size = 20
-max_image_size = 20
-title_trackbar_kernel_size = 'Kernel size'
-title_trackbar_image_size = 'Image size'
-title_window = 'Adjust parameters!'
+max_kernel_size = 25
+max_image_size = 25
+title_trackbar_kernel_size = 'Kernel_size'
+title_trackbar_image_size = 'Image_size'
+title_window = 'Adjust parameters !'
 
 def convert_to_grid(image_array):
     binary_image = (image_array == 255).all(axis=2).astype(int)
@@ -59,12 +59,15 @@ def erosion(val):
     global eroded
     erosion_shape = cv.MORPH_RECT
     erosion_size = cv.getTrackbarPos(title_trackbar_kernel_size, title_window)
-    image_size = cv.getTrackbarPos(title_trackbar_image_size, title_window) + 15
+
+    cv.namedWindow(title_window)
 
     element = cv.getStructuringElement(erosion_shape, (2 * erosion_size + 1, 2 * erosion_size + 1),
-                                       (erosion_size, erosion_size))
+                                       (-1, 1))
 
     erosion_dst = cv.erode(src, element)
+
+    image_size = cv.getTrackbarPos(title_trackbar_image_size, title_window) + 15
 
     erosion_processed = processImage(erosion_dst, image_size)
     eroded = erosion_processed
@@ -75,17 +78,23 @@ def erosion(val):
 def binarise(image):
     global src
     global eroded
-    src = cv.imread(cv.samples.findFile(image))
+    src = cv.imread(image)
     height, width = src.shape[:2]
     scale_factor=max(200/height, 200/width)
     src = cv.resize(src, None, fx=scale_factor, fy=scale_factor, interpolation=cv.INTER_NEAREST)
     cv.namedWindow(title_window)
 
-    cv.createTrackbar(title_trackbar_kernel_size, title_window, 2, max_kernel_size, erosion)
-    cv.createTrackbar(title_trackbar_image_size, title_window, 10, max_image_size, erosion)
+    cv.createTrackbar(title_trackbar_kernel_size, title_window, 5, max_kernel_size, erosion)
+    cv.createTrackbar(title_trackbar_image_size, title_window, 5, max_image_size, erosion)
 
-    cv.waitKey()
+    cv.imshow(title_window, src)
+    cv.resizeWindow(title_window, 3*src.shape[1], 3*src.shape[0])
+
+    cv.waitKey(0)
     cv.destroyAllWindows()
 
     final_grid = convert_to_grid(eroded)
     return final_grid
+
+
+

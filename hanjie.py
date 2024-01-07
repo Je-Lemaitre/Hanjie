@@ -16,6 +16,7 @@ if __name__ == "__main__":
 
     path = loadImage()
     grid = binarise(path)
+    # Further processing with the resized image can be done here
     #grid = binarise('pictures/mickey.jpg')
     #grid = binarise('pictures/zelda_1.jpg')
     #grid = binarise('pictures/panda.webp')
