@@ -2,11 +2,20 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk  # Import ImageTk from PIL
 from datetime import datetime
-#import hanjie
-import grid_board_selection as gbs
+# import hanjie
+import gridBoardSelection as gbs
 from os import listdir
 from os.path import join
 import random as rd
+
+import cv2 as cv
+
+from generateGrid import generateGrid
+from checkLabel import checkLabel
+from display import display
+from loadImage import loadImage
+from binarise import binarise
+from binarise import convertToGrid
 
 
 class HanjieHomePage(tk.Tk):
@@ -16,7 +25,7 @@ class HanjieHomePage(tk.Tk):
         self.geometry("800x600")
 
         # Header with Title and Image
-        game_image = Image.open("hanjie_image.png").resize((50, 50))
+        game_image = Image.open("pictures/donald.png").resize((50, 50))
         self.game_image_tk = ImageTk.PhotoImage(game_image)  # Use ImageTk to convert to Tkinter-compatible format
 
         header_frame = tk.Frame(self)
@@ -38,11 +47,12 @@ class HanjieHomePage(tk.Tk):
         description_label.pack(pady=20)
 
         # Player Pseudonym Entry
-        pseudo_label = tk.Label(self, text="Enter Your Pseudonym:", font=("Helvetica", 12))
+        pseudo_label = tk.Label(self, text="Enter Your Username:", font=("Helvetica", 12))
         pseudo_label.pack(pady=5)
 
         self.pseudo_entry = tk.Entry(self, width=40)
         self.pseudo_entry.pack(pady=10)
+        self.pseudo_entry.insert(0, "Player")
 
         # Configure Game Button
         start_button = tk.Button(self, text="Configure the Game", command=self.show_config_window, width=20, height=2)
@@ -67,34 +77,29 @@ class HanjieHomePage(tk.Tk):
 
         self.update_last_results()
 
+
+
     def show_config_window(self):
         config_window = GameConfigWindow(self)
         config_window.focus_force()
         config_window.wait_window()
 
-    def start_game(self, difficulty, grid_size, theme):
+    def start_game(self, grid):
+
         player_name = self.pseudo_entry.get()
         if not player_name:
-            messagebox.showerror("Error", "Please enter your pseudonym before starting the game.")
+            messagebox.showerror("Error", "Please enter your username before starting the game.")
             return
 
-        mypath = "pictures"
-        imgs = listdir(mypath)
-        if theme == "Travel":
-            img = "pictures/donald.png"
-        elif theme == "Cartoon":
-            img = "pictures/donald.png"
-        else:
-            img = join(mypath, rd.choice(imgs))
-
-        nbwidth, nbheight = grid_size.split("x")
-        grid = (int(nbwidth), int(nbheight))
-        #hanjie.start_game(difficulty, grid, img)
         result = 1000
         date = datetime.now().strftime("%Y-%m-%d %H:%M")
 
         self.last_results.append({"date": date, "player": player_name, "result": result})
         self.update_last_results()
+
+        labelsX, labelsY = checkLabel(grid)
+        for row in grid: print(row)
+        display(grid, labelsX, labelsY, 1)
 
     def exit_game(self):
         self.destroy()
@@ -120,7 +125,7 @@ class GameConfigWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title("Game Configuration")
-        self.geometry("400x500")
+        self.geometry("400x600")
 
         difficulty_label = tk.Label(self, text="Select Difficulty:", font=("Helvetica", 12))
         difficulty_label.pack(pady=5)
@@ -171,6 +176,11 @@ class GameConfigWindow(tk.Toplevel):
         create_button = tk.Button(options_frame, text="Grid Creator", command=self.grid_creator)
         create_button.grid(row=1, column=0, columnspan=4, pady=10)
 
+        launch_random = tk.Button(
+            self, text="Launch Random", command=lambda: self.launch_game(False), width=20, height=2, bg="lime"
+        )
+        launch_random.pack(pady=10)
+
         # Create a frame to display the grid
         grid_frame = tk.Frame(self, padx=10, pady=10)
         grid_frame.pack(padx=10, pady=10)
@@ -184,7 +194,7 @@ class GameConfigWindow(tk.Toplevel):
         self.theme_combobox.pack(pady=10)
 
         launch_button = tk.Button(
-            self, text="Launch Game", command=self.launch_game, width=20, height=2
+            self, text="Launch Picture", command=lambda: self.launch_game(True), width=20, height=2, bg="lime"
         )
         launch_button.pack(pady=10)
 
@@ -214,20 +224,34 @@ class GameConfigWindow(tk.Toplevel):
         gridSlection_window = gbs.GridBoardSelectionWindow(self)
         gridSlection_window.focus_force()
         gridSlection_window.wait_window()
-        
+
         height = gridSlection_window.height
         width = gridSlection_window.width
 
         self.update_height(height - int(self.height_entry.get()))
         self.update_width(width - int(self.width_entry.get()))
-        
 
-    def launch_game(self):
-        difficulty = self.difficulty_combobox.get()
-        grid_size = (int(self.width_entry.get()),int(self.height_entry.get()))
-        theme = self.theme_combobox.get()
+    def launch_game(self, isPicture):
+        grid = ['x']
+        if(isPicture):
+            theme = self.theme_combobox.get()
+            mypath = "pictures"
+            imagesPath = listdir(mypath)
+            if theme == "Travel":
+                path = "pictures/EffeilTower.png"
+            elif theme == "Cartoon":
+                path = "pictures/donald.png"
+            else:
+                path = join(mypath, rd.choice(imagesPath))
 
-        self.master.start_game(difficulty, grid_size, theme)
+            grid = binarise(path)
+            #img = cv.imread(cv.samples.findFile(path))
+            #grid = convertToGrid(img)
+
+        else:
+            grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.5)
+
+        self.master.start_game(grid)
         self.destroy()
 
     def exit_config(self):
