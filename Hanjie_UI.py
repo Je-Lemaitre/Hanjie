@@ -134,6 +134,7 @@ class GameConfigWindow(tk.Toplevel):
         self.difficulty_combobox = ttk.Combobox(self, values=difficulty_options, state="readonly")
         self.difficulty_combobox.set(difficulty_options[0])
         self.difficulty_combobox.pack(pady=10)
+        self.difficulty_combobox.bind("<<ComboboxSelected>>", self.update_difficulty)
 
         # grid_size_label = tk.Label(self, text="Select Grid Size:", font=("Helvetica", 12))
         # grid_size_label.pack(pady=5)
@@ -203,11 +204,28 @@ class GameConfigWindow(tk.Toplevel):
         )
         exit_config_button.pack(pady=10)
 
+
+    def update_difficulty(self, action):
+        current_value = self.difficulty_combobox.get()
+        if current_value == "Easy":
+            new_width = 5
+            new_height = 5
+        elif current_value == "Medium":
+            new_width = 10
+            new_height = 5
+        elif current_value == "Hard":
+            new_width = 15
+            new_height = 10
+        self.width_entry.delete(0, tk.END)
+        self.width_entry.insert(0, new_width)
+        self.height_entry.delete(0, tk.END)
+        self.height_entry.insert(0, new_height)
+
     def update_width(self, action):
         current_value = self.width_entry.get()
         if current_value.isdigit():
             new_value = int(current_value) + action
-            if new_value > 0:
+            if 0 < new_value <= 25 :
                 self.width_entry.delete(0, tk.END)
                 self.width_entry.insert(0, new_value)
 
@@ -215,7 +233,7 @@ class GameConfigWindow(tk.Toplevel):
         current_value = self.height_entry.get()
         if current_value.isdigit():
             new_value = int(current_value) + action
-            if new_value > 0:
+            if 0 < new_value <= 15 :
                 self.height_entry.delete(0, tk.END)
                 self.height_entry.insert(0, new_value)
 
@@ -249,7 +267,7 @@ class GameConfigWindow(tk.Toplevel):
             #grid = convertToGrid(img)
 
         else:
-            grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.5)
+            grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.68)
 
         self.master.start_game(grid)
         self.destroy()
