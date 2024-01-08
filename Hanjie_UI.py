@@ -131,7 +131,7 @@ class GameConfigWindow(tk.Toplevel):
         difficulty_label.pack(pady=5)
 
         difficulty_options = ["Easy", "Medium", "Hard"]
-        self.difficulty_combobox = ttk.Combobox(self, values=difficulty_options)
+        self.difficulty_combobox = ttk.Combobox(self, values=difficulty_options, state="readonly")
         self.difficulty_combobox.set(difficulty_options[0])
         self.difficulty_combobox.pack(pady=10)
 
@@ -189,7 +189,7 @@ class GameConfigWindow(tk.Toplevel):
         theme_label.pack(pady=5)
 
         theme_options = ["Random", "Cartoon", "Travel", "Animals"]
-        self.theme_combobox = ttk.Combobox(self, values=theme_options)
+        self.theme_combobox = ttk.Combobox(self, values=theme_options, state="readonly")
         self.theme_combobox.set(theme_options[0])
         self.theme_combobox.pack(pady=10)
 
