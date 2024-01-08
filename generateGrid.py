@@ -1,16 +1,5 @@
-def generateGrid(gridSize):
+import numpy as np
 
-    o='o'
-    x='x'
-
-    grid = [
-        [o, o, o, o, o, o],
-        [o, x, x, x, x, o],
-        [o, x, o, o, x, o],
-        [o, x, x, o, x, o],
-        [o, x, x, x, x, o],
-        [o, o, o, x, o, o],
-        [x, x, o, x, o, o]
-    ]
-
-    return grid
+def generateGrid(sizeX, sizeY, ratio):
+    grid = np.random.choice(['x', 'o'], size=(sizeX, sizeY), p=[ratio, 1-ratio])
+    return grid.tolist()

@@ -1,28 +1,31 @@
 from __future__ import print_function
-from PIL.Image import fromarray
 import cv2 as cv
 import numpy as np
-import tkinter as tk
-from PIL import Image, ImageTk
+import argparse
+from PIL import Image, ImageFilter, ImageOps
+from PIL.Image import fromarray
 
 src = None
-max_kernel_size = 25
-max_image_size = 25
-title_trackbar_kernel_size = 'Kernel_size'
-title_trackbar_image_size = 'Image_size'
-title_window = 'Adjust parameters !'
+max_kernel_size = 20
+max_image_size = 20
+title_trackbar_kernel_size = 'Kernel size'
+title_trackbar_image_size = 'Image size'
+title_window = 'Adjust parameters!'
 
-def convert_to_grid(image_array):
+def convertToGrid(image_array):
+    #binary_image = (image_array[:, :] == 255).astype(int)
     binary_image = (image_array == 255).all(axis=2).astype(int)
+
     grid = [['x' if pixel == 0 else 'o' for pixel in row] for row in binary_image]
 
     grid = [row for row in grid if 'x' in row]
     col_indices = [i for i, col in enumerate(zip(*grid)) if 'x' in col]
     grid = [list(row[idx] for idx in col_indices) for row in grid]
 
+    if grid == []: return [['x']*image_array.shape[0]]*image_array.shape[1]
     return grid
 
-def find_bounding_box(image):
+def findBoundingBox(image):
     width, height = image.size
     left, top, right, bottom = width, height, 0, 0
 
@@ -43,7 +46,7 @@ def processImage(src_erosion, image_size):
     src_to_PIL = fromarray(cv.cvtColor(src_erosion, cv.COLOR_BGR2RGB))
     src_data = src_to_PIL.convert('L').point(lambda x: 0 if x < 128 else 255)
 
-    bbox = find_bounding_box(src_data)
+    bbox = findBoundingBox(src_data)
     src_cropped = src_data.crop(bbox)
 
     new_width, new_height = src_cropped.size
@@ -59,15 +62,12 @@ def erosion(val):
     global eroded
     erosion_shape = cv.MORPH_RECT
     erosion_size = cv.getTrackbarPos(title_trackbar_kernel_size, title_window)
-
-    cv.namedWindow(title_window)
+    image_size = cv.getTrackbarPos(title_trackbar_image_size, title_window) + 15
 
     element = cv.getStructuringElement(erosion_shape, (2 * erosion_size + 1, 2 * erosion_size + 1),
-                                       (-1, 1))
+                                       (erosion_size, erosion_size))
 
     erosion_dst = cv.erode(src, element)
-
-    image_size = cv.getTrackbarPos(title_trackbar_image_size, title_window) + 15
 
     erosion_processed = processImage(erosion_dst, image_size)
     eroded = erosion_processed
@@ -78,23 +78,17 @@ def erosion(val):
 def binarise(image):
     global src
     global eroded
-    src = cv.imread(image)
+    src = cv.imread(cv.samples.findFile(image))
     height, width = src.shape[:2]
     scale_factor=max(200/height, 200/width)
     src = cv.resize(src, None, fx=scale_factor, fy=scale_factor, interpolation=cv.INTER_NEAREST)
     cv.namedWindow(title_window)
 
-    cv.createTrackbar(title_trackbar_kernel_size, title_window, 5, max_kernel_size, erosion)
-    cv.createTrackbar(title_trackbar_image_size, title_window, 5, max_image_size, erosion)
+    cv.createTrackbar(title_trackbar_kernel_size, title_window, 2, max_kernel_size, erosion)
+    cv.createTrackbar(title_trackbar_image_size, title_window, 10, max_image_size, erosion)
 
-    cv.imshow(title_window, src)
-    cv.resizeWindow(title_window, 3*src.shape[1], 3*src.shape[0])
-
-    cv.waitKey(0)
+    cv.waitKey()
     cv.destroyAllWindows()
 
-    final_grid = convert_to_grid(eroded)
-    return final_grid
-
-
-
+    finalGrid = convertToGrid(eroded)
+    return finalGrid
