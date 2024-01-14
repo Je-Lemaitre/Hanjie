@@ -98,7 +98,8 @@ class HanjieHomePage(tk.Tk):
         self.update_last_results()
 
         labelsX, labelsY = checkLabel(grid)
-        for row in grid: print(row)
+        #for row in grid: print(row)
+
         display(grid, labelsX, labelsY, 1)
 
     def exit_game(self):

@@ -125,7 +125,7 @@ class GridBoardSelectionWindow(tk.Toplevel):
         rows = int(self.scale1.get())
         columns = int(self.scale2.get())
 
-        print(f"rows : {rows} and columns : {columns}")
+        #print(f"rows : {rows} and columns : {columns}")
 
         self.label_value_height.config(text=str(int(self.scale1.get())))
         self.label_value_width.config(text=str(int(self.scale2.get())))

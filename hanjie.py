@@ -16,5 +16,5 @@ if __name__ == "__main__":
     #grid = binarise('pictures/taz_300_300.jpg')
 
     labelsX, labelsY = checkLabel(grid)
-    for row in grid: print(row)
+    #for row in grid: print(row)
     display(grid, labelsX, labelsY, 1)
