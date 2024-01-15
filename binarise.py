@@ -20,7 +20,6 @@ def validate(state, userdata):
     print("Validation Button Clicked")
 
 def convertToGrid(image_array):
-    #binary_image = (image_array[:, :] == 255).astype(int)
     binary_image = (image_array == 255).all(axis=2).astype(int)
 
     grid = [['x' if pixel == 0 else 'o' for pixel in row] for row in binary_image]
