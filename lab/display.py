@@ -3,7 +3,7 @@ from checkLabel import checkLabel
 
 win = False
 WIDTH_FACTOR = 1
-HEIGHT_FACTOR = 2
+HEIGHT_FACTOR = 1
 
 # Function to handle the click on a case
 def handle_case_click(x, y, cases, buttons, labelsX, labelsY, event):
@@ -78,12 +78,12 @@ def display(grid, labelsX, labelsY, size):
 
     for i in range(int((sizeX-1)/5)):
         for j in range(sizeY):
-            frame = tk.Frame(window, width=2, height=48, borderwidth=2, relief="solid")
+            frame = tk.Frame(window, width=2, height=24, borderwidth=2, relief="solid")
             frame.grid(row=sizeLabY+j, column=4+sizeLabX+i*5, columnspan=2)
 
     for i in range(int((sizeY-1)/5)):
         for j in range(sizeX):
-            frame = tk.Frame(window, width=52, height=2, borderwidth=3, relief="solid")
+            frame = tk.Frame(window, width=26, height=2, borderwidth=3, relief="solid")
             frame.grid(row=4+sizeLabY+i*5, column=sizeLabX+j, columnspan=1, sticky="s")
 
     # Start the Tkinter main loop
