@@ -138,15 +138,6 @@ class GameConfigWindow(tk.Toplevel):
         self.difficulty_combobox.pack(pady=10)
         self.difficulty_combobox.bind("<<ComboboxSelected>>", self.update_difficulty)
 
-        # grid_size_label = tk.Label(self, text="Select Grid Size:", font=("Helvetica", 12))
-        # grid_size_label.pack(pady=5)
-        #
-        # self.grid_size_entry = tk.Entry(self)
-        # self.grid_size_entry.pack(pady=10)
-        # self.grid_size_entry.insert(0, "10x10")
-        # grid_select_button = tk.Button(self, text="Grid Selection", command=self.selectGrid, width=20, height=2)
-        # grid_select_button.pack(pady=10)
-
         # Create a frame for grid-related options
         options_frame = tk.Frame(self, padx=10, pady=10)
         options_frame.pack(padx=10, pady=10)
@@ -248,8 +239,8 @@ class GameConfigWindow(tk.Toplevel):
         height = gridSlection_window.height
         width = gridSlection_window.width
 
-        self.update_height(height - int(self.height_entry.get()))
-        self.update_width(width - int(self.width_entry.get()))
+        self.update_height(min(15,height - int(self.height_entry.get())))
+        self.update_width(min(25,width - int(self.width_entry.get())))
 
     def launch_game(self, isPicture):
         grid = ['x']
@@ -272,9 +263,9 @@ class GameConfigWindow(tk.Toplevel):
             path = join(mypath, rd.choice(imageChoice))
             print(path)
 
-            grid = binarise(path)
-            #img = cv.imread(cv.samples.findFile(path))
-            #grid = convertToGrid(img)
+            if theme == "FIPA2024":
+                grid = [['x', ' ', 'x', ' ', 'x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' '], ['x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', ' '], [' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', 'x', ' ', ' ', 'x', ' ', ' '], ['x', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', 'x', 'x'], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], ['x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', ' ', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', ' ', 'x', ' ', ' '], ['x', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', ' ', ' ', 'x', ' ', ' ', ' ', 'x'], ['x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', 'x', 'x', ' ', ' ', ' ', 'x', ' ', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x']]
+            else: grid = binarise(path)
 
         else:
             grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.68)
