@@ -106,10 +106,7 @@ def showBinarizedImage(image_path : str):
     - The user need to custom binarisation factor and the size of the grid
     """
     original_image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
-    print(f" image path {image_path}, original image : {type(original_image)}")
-
     _, binarized_image = cv.threshold(original_image, 128, 255, cv.THRESH_BINARY)
-    print(f"binarized image : {type(binarized_image)}")
     kernel = cv.getStructuringElement(cv.MORPH_RECT, (5, 5))  
 
     initial_display_size = (150, 150)
@@ -146,7 +143,6 @@ def showBinarizedImage(image_path : str):
 
         # Adjust the binarization intensity
         _, adjusted_image = cv.threshold(resized_image, new_intensity, 255, cv.THRESH_BINARY)
-        print(f"adjusted image : {type(adjusted_image)}")
         tk_updated_image = ImageTk.PhotoImage(Image.fromarray(adjusted_image))
         image_label.config(image=tk_updated_image, width=2* initial_display_size[0], height=2* initial_display_size[1])
         image_label.image = tk_updated_image  
@@ -159,7 +155,6 @@ def showBinarizedImage(image_path : str):
     window.after(100, update_image)  
 
     final_grid = convert_to_grid(adjusted_image) 
-    print("after convert to grid")
 
     
     return final_grid
