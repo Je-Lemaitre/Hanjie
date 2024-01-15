@@ -1,11 +1,32 @@
 import tkinter as tk
 import time
 from checkLabel import checkLabel
+from hint import hint_position
 
 timer = time.time()
 lastX = lastY = -1
 lastEvent = ""
 allowed = False
+
+def set_green(buttons):
+    for i in range(len(buttons)):
+        for j in range(len(buttons[i])):
+            if(buttons[i][j].cget("activebackground") == "black"):
+                buttons[i][j].config(activebackground="light green")
+                buttons[i][j].config(bg="light green")
+
+def help_request(grid, cases, buttons, labelsX, labelsY):
+
+    labelsXInput, labelsYInput = checkLabel(cases)
+    if (labelsXInput == labelsX and labelsYInput == labelsY): return
+
+    answer = hint_position(grid, cases)
+    cases[answer[1]][answer[0]] = "x"
+    buttons[answer[1]][answer[0]].config(activebackground="black")
+    buttons[answer[1]][answer[0]].config(bg="black")
+
+    labelsXInput, labelsYInput = checkLabel(cases)
+    if (labelsXInput == labelsX and labelsYInput == labelsY): set_green(buttons)
 
 # Function to handle the click on a case
 def handle_case_click(x, y, cases, buttons, labelsX, labelsY, event):
@@ -44,14 +65,7 @@ def handle_case_click(x, y, cases, buttons, labelsX, labelsY, event):
         buttons[y][x].config(bg="light gray")
 
     labelsXInput, labelsYInput = checkLabel(cases)
-    if (labelsXInput == labelsX and labelsYInput == labelsY):
-        win = True
-
-        for i in range(len(buttons)):
-            for j in range(len(buttons[i])):
-                if(buttons[i][j].cget("activebackground") == "black"):
-                    buttons[i][j].config(activebackground="light green")
-                    buttons[i][j].config(bg="light green")
+    if (labelsXInput == labelsX and labelsYInput == labelsY): set_green(buttons)
 
 # Function to display the GUI
 def display(window, grid, labelsX, labelsY, size):
@@ -109,6 +123,12 @@ def display(window, grid, labelsX, labelsY, size):
         for j in range(sizeX):
             frame = tk.Frame(window, width=52, height=2, borderwidth=3, relief="solid")
             frame.grid(row=4+sizeLabY+i*5, column=sizeLabX+j, columnspan=1, sticky="s")
+
+    help_button = tk.Button(window, text="HINT", width=3 * size, height=2 * size,
+                            bg="light blue", highlightthickness=1 * size, highlightcolor="light blue",
+                            activebackground="light blue")
+    help_button.grid(row=0, column=0)
+    help_button.bind("<Button-1>", lambda event, x=x, y=y: help_request(grid, cases, buttons, labelsX, labelsY))  # Left click
 
     # Start the Tkinter main loop
     window.mainloop()

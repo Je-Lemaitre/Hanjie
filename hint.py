@@ -1,7 +1,6 @@
 import random
 import tkinter as tk
 
-
 # Return one case not found yet
 def hint_position(grid, player_cases):
     correct_positions = grid_to_positions(grid)
@@ -13,7 +12,6 @@ def hint_position(grid, player_cases):
     else:
         return []
 
-
 # Return a list with all the positions of the squares to find
 def grid_to_positions(grid):
     positions = []
@@ -22,7 +20,6 @@ def grid_to_positions(grid):
             if grid[i][j] == 'x':
                 positions.append([j, i])
     return positions
-
 
 def handle_hint_click(cases, grid, buttons):
     hint = hint_position(grid, cases)
@@ -33,10 +30,3 @@ def handle_hint_click(cases, grid, buttons):
         button = buttons[hint[1]][hint[0]]
         button.config(activebackground="green")
         button.config(bg="green")
-
-
-def hint_button(window):
-    button = tk.Button(window, text="Hint", width=3, height=3,
-                       bg="light gray", highlightthickness=2, highlightcolor="white",
-                       activebackground="light gray")
-    return button
