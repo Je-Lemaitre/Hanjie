@@ -14,7 +14,7 @@ from generateGrid import generateGrid
 from checkLabel import checkLabel
 from display import display
 from loadImage import loadImage
-from binarise import binarise
+from binarise import binarise, showBinarizedImage, convert_to_grid
 from binarise import convertToGrid
 
 
@@ -52,7 +52,7 @@ class HanjieHomePage(tk.Tk):
 
         self.pseudo_entry = tk.Entry(self, width=40)
         self.pseudo_entry.pack(pady=10)
-        self.pseudo_entry.insert(0, "Player")
+        self.pseudo_entry.insert(0, "Guest")
 
         # Configure Game Button
         start_button = tk.Button(self, text="Configure the Game", command=self.show_config_window, width=20, height=2)
@@ -69,15 +69,13 @@ class HanjieHomePage(tk.Tk):
         self.last_results_labels = []
 
         self.last_results = [
-            {"date": "2023-01-01", "player": "Donald", "result": 650},
-            {"date": "2023-01-02", "player": "Mickey", "result": 800},
-            {"date": "2023-01-03", "player": "Felix", "result": 640},
+            {"date": "2023-01-01 09:00", "player": "Donald", "result": 650},
+            {"date": "2023-01-02 09:00", "player": "Mickey", "result": 800},
+            {"date": "2023-01-03 09:00", "player": "Felix", "result": 640},
             # ... To be replaced by results stored in a csv or json file?
         ]
 
         self.update_last_results()
-
-
 
     def show_config_window(self):
         config_window = GameConfigWindow(self)
@@ -85,6 +83,8 @@ class HanjieHomePage(tk.Tk):
         config_window.wait_window()
 
     def start_game(self, grid):
+
+        print(f"start game : grid {type(grid                 )}")
 
         player_name = self.pseudo_entry.get()
         if not player_name:
@@ -98,9 +98,13 @@ class HanjieHomePage(tk.Tk):
         self.update_last_results()
 
         labelsX, labelsY = checkLabel(grid)
-        #for row in grid: print(row)
 
-        display(grid, labelsX, labelsY, 1)
+        for row in grid: print(row)
+
+        window = tk.Tk()
+        window.title("Hanjie Game")
+        display(window, grid, labelsX, labelsY, 1)
+        window.destroy()
 
     def exit_game(self):
         self.destroy()
@@ -126,25 +130,16 @@ class GameConfigWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title("Game Configuration")
-        self.geometry("400x600")
+        self.geometry("450x600")
 
         difficulty_label = tk.Label(self, text="Select Difficulty:", font=("Helvetica", 12))
         difficulty_label.pack(pady=5)
 
         difficulty_options = ["Easy", "Medium", "Hard"]
-        self.difficulty_combobox = ttk.Combobox(self, values=difficulty_options, state="readonly")
+        self.difficulty_combobox = ttk.Combobox(self, values=difficulty_options)
         self.difficulty_combobox.set(difficulty_options[0])
         self.difficulty_combobox.pack(pady=10)
         self.difficulty_combobox.bind("<<ComboboxSelected>>", self.update_difficulty)
-
-        # grid_size_label = tk.Label(self, text="Select Grid Size:", font=("Helvetica", 12))
-        # grid_size_label.pack(pady=5)
-        #
-        # self.grid_size_entry = tk.Entry(self)
-        # self.grid_size_entry.pack(pady=10)
-        # self.grid_size_entry.insert(0, "10x10")
-        # grid_select_button = tk.Button(self, text="Grid Selection", command=self.selectGrid, width=20, height=2)
-        # grid_select_button.pack(pady=10)
 
         # Create a frame for grid-related options
         options_frame = tk.Frame(self, padx=10, pady=10)
@@ -155,7 +150,7 @@ class GameConfigWindow(tk.Toplevel):
         grid_selection_frame.grid(row=0, column=0, columnspan=4, pady=10)
 
         # Create labels, entry boxes, and buttons for height
-        tk.Label(grid_selection_frame, text="Height:").grid(row=0, column=0, padx=5, pady=5)
+        tk.Label(grid_selection_frame, text="Height (<15):").grid(row=0, column=0, padx=5, pady=5)
         self.height_entry = tk.Entry(grid_selection_frame)
         self.height_entry.insert(0, 5)  # Set default value
         self.height_entry.grid(row=0, column=1, padx=5, pady=5)
@@ -165,7 +160,7 @@ class GameConfigWindow(tk.Toplevel):
         height_decrement_button.grid(row=0, column=3, padx=5, pady=5)
 
         # Create labels, entry boxes, and buttons for width
-        tk.Label(grid_selection_frame, text="Width:").grid(row=1, column=0, padx=5, pady=5)
+        tk.Label(grid_selection_frame, text="Width (<25):").grid(row=1, column=0, padx=5, pady=5)
         self.width_entry = tk.Entry(grid_selection_frame)
         self.width_entry.insert(0, 5)  # Set default value
         self.width_entry.grid(row=1, column=1, padx=5, pady=5)
@@ -181,6 +176,7 @@ class GameConfigWindow(tk.Toplevel):
         launch_random = tk.Button(
             self, text="Launch Random", command=lambda: self.launch_game(False), width=20, height=2, bg="lime"
         )
+
         launch_random.pack(pady=10)
 
         # Create a frame to display the grid
@@ -191,13 +187,14 @@ class GameConfigWindow(tk.Toplevel):
         theme_label.pack(pady=5)
 
         theme_options = ["Random", "Cartoon", "Travel", "Animals"]
-        self.theme_combobox = ttk.Combobox(self, values=theme_options, state="readonly")
+        self.theme_combobox = ttk.Combobox(self, values=theme_options)
         self.theme_combobox.set(theme_options[0])
         self.theme_combobox.pack(pady=10)
 
         launch_button = tk.Button(
             self, text="Launch Picture", command=lambda: self.launch_game(True), width=20, height=2, bg="lime"
         )
+
         launch_button.pack(pady=10)
 
         exit_config_button = tk.Button(
@@ -205,6 +202,10 @@ class GameConfigWindow(tk.Toplevel):
         )
         exit_config_button.pack(pady=10)
 
+    def show_binarizedImage_Dialog(self):
+        config_window = GameConfigWindow(self)
+        config_window.focus_force()
+        config_window.wait_window()
 
     def update_difficulty(self, action):
         current_value = self.difficulty_combobox.get()
@@ -247,8 +248,8 @@ class GameConfigWindow(tk.Toplevel):
         height = gridSlection_window.height
         width = gridSlection_window.width
 
-        self.update_height(height - int(self.height_entry.get()))
-        self.update_width(width - int(self.width_entry.get()))
+        self.update_height(min(15,height - int(self.height_entry.get())))
+        self.update_width(min(25,width - int(self.width_entry.get())))
 
     def launch_game(self, isPicture):
         grid = ['x']
@@ -256,19 +257,34 @@ class GameConfigWindow(tk.Toplevel):
             theme = self.theme_combobox.get()
             mypath = "pictures"
             imagesPath = listdir(mypath)
-            if theme == "Travel":
-                path = "pictures/EffeilTower.png"
-            elif theme == "Cartoon":
-                path = "pictures/donald.png"
+            if theme == "Cartoon":
+                imageChoice = ["bugs bunny.jpeg", "donald.png", "felix.jpg"]
+                print("Cartoon")
+            elif theme == "Travel":
+                imageChoice = ["EffeilTower.png"]
+                print("Travel")
+            elif theme == "Animals":
+                imageChoice = ["panda.webp", "scooby doo.jpg", "taz_300_300.jpg"]
+                print("Animal")
             else:
-                path = join(mypath, rd.choice(imagesPath))
+                imageChoice = imagesPath
+                print("Random")
+            path = join(mypath, rd.choice(imageChoice))
+            print(path)
 
-            grid = binarise(path)
+            # grid = binarise(path) # old version (arthur original function)
+            print("before grid generation and show binarized image")
+            grid = showBinarizedImage(path)
+            # TODO - go to class to binarized image
+            # binarizedImage_Dialog(parent=self, image_path=path)
+            print("grid from image generated!")
+
             #img = cv.imread(cv.samples.findFile(path))
             #grid = convertToGrid(img)
 
         else:
             grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.68)
+
 
         self.master.start_game(grid)
         self.destroy()

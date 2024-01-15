@@ -4,7 +4,8 @@ from tkinter import ttk
 # Ronan GEAY
 
 MIN_SIZE = 5
-MAX_SIZE = 40
+MAX_SIZE_WIDTH = 25
+MAX_SIZE_HEIGHT = 15
 
 DEFAULT_WIDTH = 5
 DEFAULT_HEIGHT = 5
@@ -44,30 +45,30 @@ class GridBoardSelectionWindow(tk.Toplevel):
         frame_exit = ttk.Frame(self, padding="10")
         frame_exit.grid(row=2, column=1, padx=10, pady=10, sticky="ne")
 
-        self.canvas = tk.Canvas(frame_tableau, width=400, height=400, borderwidth=1, relief="solid")
+        self.canvas = tk.Canvas(frame_tableau, width=249, height=149, borderwidth=1, relief="solid")
         self.canvas.pack()
 
-        label_width = ttk.Label(frame_width, text="Width:")
-        label_width.grid(row=0, column=0, pady=(0, 5))
+        label_width = ttk.Label(frame_width, text="Height:")
+        label_width.grid(row=1, column=0, pady=(0, 5))
+
+        self.label_value_height = ttk.Label(frame_height, text=str(DEFAULT_HEIGHT))
+        self.label_value_height.grid(row=3, column=0)
+
+        self.scale2 = ttk.Scale(frame_height, from_=MIN_SIZE, to=MAX_SIZE_WIDTH, orient="horizontal",
+                                command=self.update_label_height)
+        self.scale2.grid(row=1, column=0, pady=(0, 5))
+        self.scale2.set(DEFAULT_HEIGHT)
+
+        label_height = ttk.Label(frame_height, text="Width:")
+        label_height.grid(row=2, column=0, pady=(0, 5))
 
         self.label_value_width = ttk.Label(frame_width, text=str(DEFAULT_WIDTH))
         self.label_value_width.grid(row=2, column=0)
 
-        self.scale1 = ttk.Scale(frame_width, from_=MIN_SIZE, to=MAX_SIZE, orient="horizontal",
+        self.scale1 = ttk.Scale(frame_width, from_=MIN_SIZE, to=MAX_SIZE_HEIGHT, orient="horizontal",
                                 command=self.update_label_width)
-        self.scale1.grid(row=1, column=0, pady=(0, 5))
+        self.scale1.grid(row=0, column=0, pady=(0, 5))
         self.scale1.set(DEFAULT_WIDTH)
-
-        label_height = ttk.Label(frame_height, text="Height:")
-        label_height.grid(row=0, column=0, pady=(0, 5))
-
-        self.label_value_height = ttk.Label(frame_height, text=str(DEFAULT_HEIGHT))
-        self.label_value_height.grid(row=2, column=0)
-
-        self.scale2 = ttk.Scale(frame_height, from_=MIN_SIZE, to=MAX_SIZE, orient="horizontal",
-                                command=self.update_label_height)
-        self.scale2.grid(row=1, column=0, pady=(0, 5))
-        self.scale2.set(DEFAULT_HEIGHT)
 
         ttk.Label(frame_radio, text="Size of grid according difficulties").pack()
 
@@ -125,7 +126,7 @@ class GridBoardSelectionWindow(tk.Toplevel):
         rows = int(self.scale1.get())
         columns = int(self.scale2.get())
 
-        #print(f"rows : {rows} and columns : {columns}")
+        print(f"rows : {rows} and columns : {columns}")
 
         self.label_value_height.config(text=str(int(self.scale1.get())))
         self.label_value_width.config(text=str(int(self.scale2.get())))
