@@ -18,6 +18,13 @@ from binarise import binarise
 from binarise import convertToGrid
 
 
+# Grid size according level
+
+EASY_GRID_SIZE = 10
+MEDIUM_GRID_SIZE = 15
+DIFFICULT_GRID_SIZE = 20
+HARD_GRID_SIZE = 25
+
 class HanjieHomePage(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -201,14 +208,14 @@ class GameConfigWindow(tk.Toplevel):
     def update_difficulty(self, action):
         current_value = self.difficulty_combobox.get()
         if current_value == "Easy":
-            new_width = 5
-            new_height = 5
+            new_width = EASY_GRID_SIZE
+            new_height = EASY_GRID_SIZE
         elif current_value == "Medium":
-            new_width = 10
-            new_height = 5
+            new_width = MEDIUM_GRID_SIZE
+            new_height = MEDIUM_GRID_SIZE
         elif current_value == "Hard":
-            new_width = 15
-            new_height = 10
+            new_width = HARD_GRID_SIZE
+            new_height = HARD_GRID_SIZE
         self.width_entry.delete(0, tk.END)
         self.width_entry.insert(0, new_width)
         self.height_entry.delete(0, tk.END)
