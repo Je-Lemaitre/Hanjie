@@ -31,6 +31,11 @@ class HanjieHomePage(tk.Tk):
         self.title("Hanjie - Puzzle Game")
         self.geometry("800x600")
 
+        photo = tk.PhotoImage(file = "hanjie_image.png")
+        self.wm_iconphoto(False, photo)
+        self.iconbitmap("hanjie_image.png")
+        self.resizable(False, False)
+
         # Header with Title and Image
         game_image = Image.open("pictures/donald.png").resize((50, 50))
         self.game_image_tk = ImageTk.PhotoImage(game_image)  # Use ImageTk to convert to Tkinter-compatible format
@@ -134,12 +139,13 @@ class GameConfigWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title("Game Configuration")
-        self.geometry("450x600")
+        self.geometry("500x600")
+        self.resizable(False, False)
 
         difficulty_label = tk.Label(self, text="Select Difficulty:", font=("Helvetica", 12))
         difficulty_label.pack(pady=5)
 
-        difficulty_options = ["Easy", "Medium", "Hard"]
+        difficulty_options = ["Easy", "Medium", "Difficult", "Hard"]
         self.difficulty_combobox = ttk.Combobox(self, values=difficulty_options)
         self.difficulty_combobox.set(difficulty_options[0])
         self.difficulty_combobox.pack(pady=10)
@@ -213,6 +219,9 @@ class GameConfigWindow(tk.Toplevel):
         elif current_value == "Medium":
             new_width = MEDIUM_GRID_SIZE
             new_height = MEDIUM_GRID_SIZE
+        elif current_value == "Difficult":
+            new_width = DIFFICULT_GRID_SIZE
+            new_height = DIFFICULT_GRID_SIZE
         elif current_value == "Hard":
             new_width = 15
             new_height = HARD_GRID_SIZE

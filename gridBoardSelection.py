@@ -24,6 +24,7 @@ class GridBoardSelectionWindow(tk.Toplevel):
         self.title("Grid board selection")
         self.width = 5
         self.height = 5
+        self.resizable(False, False)
 
 
         """
