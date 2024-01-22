@@ -23,7 +23,7 @@ def loadImage():
         labelsX, labelsY = checkLabel(grid)
 
         for i, row in enumerate(grid): print(i, row)
-        display(grid, labelsX, labelsY, 1)
+        display(grid, labelsX, labelsY, 1, 1)
 
     
 

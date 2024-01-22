@@ -12,9 +12,10 @@ import cv2 as cv
 
 from generateGrid import generateGrid
 from checkLabel import checkLabel
+from checkLabel import checkLabel
 from display import display
 from loadImage import loadImage
-from binarise import binarise, showBinarizedImage, convert_to_grid
+from hanjie import showBinarizedImage, convert_to_grid
 from binarise import convertToGrid
 
 
@@ -41,7 +42,7 @@ class HanjieHomePage(tk.Tk):
         description_text = (
             "Hanjie, also known as Nonograms or Griddlers, is a logic puzzle game. "
             "The goal is to reveal a hidden picture by painting the correct cells on a grid. "
-            "Solve puzzles of varying difficulty and enjoy the challenge!"
+            "Solve puzzles of varying difficulty and enjoy the challenge !"
         )
         description_label = tk.Label(self, text=description_text, font=("Helvetica", 14), wraplength=600)
         description_label.pack(pady=20)
@@ -275,9 +276,10 @@ class GameConfigWindow(tk.Toplevel):
             # grid = binarise(path) # old version (arthur original function)
             print("before grid generation and show binarized image")
             grid = showBinarizedImage(path)
+            # self.master.start_game(grid)
             # TODO - go to class to binarized image
             # binarizedImage_Dialog(parent=self, image_path=path)
-            print("grid from image generated!")
+            # print("grid from image generated!")
 
             #img = cv.imread(cv.samples.findFile(path))
             #grid = convertToGrid(img)
@@ -286,7 +288,10 @@ class GameConfigWindow(tk.Toplevel):
             grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.68)
 
 
-        self.master.start_game(grid)
+        labelsX, labelsY = checkLabel(grid)
+
+        display(grid, labelsX, labelsY, 1)
+        #self.master.start_game(grid)
         self.destroy()
 
     def exit_config(self):
