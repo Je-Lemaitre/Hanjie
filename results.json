@@ -50,26 +50,6 @@
     "help used": 0
   },
   {
-    "date": "2024-01-22 09:36",
-    "player": "nvisomnvenvsoievnsovdnms",
-    "grid size": [
-      5,
-      5
-    ],
-    "time": 3,
-    "help used": 16
-  },
-  {
-    "date": "2024-01-22 09:37",
-    "player": "nvisomnvenvsoievnsovdnms",
-    "grid size": [
-      15,
-      25
-    ],
-    "time": 30,
-    "help used": 261
-  },
-  {
     "date": "2024-01-22 09:47",
     "player": "Guest",
     "grid size": [
@@ -138,5 +118,25 @@
     ],
     "time": 6,
     "help used": 13
+  },
+  {
+    "date": "2024-01-22 10:37",
+    "player": "Guest",
+    "grid size": [
+      10,
+      6
+    ],
+    "time": 127,
+    "help used": 0
+  },
+  {
+    "date": "2024-01-22 10:49",
+    "player": "Guest",
+    "grid size": [
+      5,
+      5
+    ],
+    "time": 13,
+    "help used": 0
   }
 ]

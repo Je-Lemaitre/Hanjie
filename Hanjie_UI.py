@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from PIL import Image, ImageTk  # Import ImageTk from PIL
 from datetime import datetime
 # import hanjie
@@ -23,7 +23,7 @@ class HanjieHomePage(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Hanjie - Puzzle Game")
-        self.geometry("800x600")
+        self.geometry("800x700")
 
         # Header with Title and Image
         game_image = Image.open("pictures/donald.png").resize((50, 50))
@@ -111,7 +111,7 @@ class HanjieHomePage(tk.Tk):
             self.save_results_to_json()
 
             print("GAME WON!!")
-            print("Grid size :", len(labelsX), len(labelsY))
+            print("Grid size :", len(labelsY), "/", len(labelsX))
             print("Time      :", time_used)
             print("Hints     :", help_used)
             if(len(labelsX) == 15 and len(labelsY) == 25 and help_used == 0): print("Want some secrets? Write 'FIPA2024'")
@@ -126,7 +126,7 @@ class HanjieHomePage(tk.Tk):
         self.last_results_labels = []
         sorted_results = sorted(self.last_results, key=lambda res: (res["grid size"][0] * res["grid size"][1], -res["time"]), reverse=True)
 
-        for i, result in enumerate(sorted_results[:5]):
+        for i, result in enumerate(sorted_results[:10]):
             player_name = result['player'][:12] + '...' if len(result['player']) > 12 else result['player']
             date = result['date'][:25] + '...' if len(result['date']) > 25 else result['date']
             time_str = str(result['time'])[:15]  # Adjust the width as needed
@@ -207,7 +207,7 @@ class GameConfigWindow(tk.Toplevel):
         theme_label = tk.Label(self, text="Select Theme:", font=("Helvetica", 12))
         theme_label.pack(pady=5)
 
-        theme_options = ["Random", "Cartoon", "Travel", "Animals"]
+        theme_options = ["Random", "Cartoon", "Travel", "Animals", "Custom"]
         self.theme_combobox = ttk.Combobox(self, values=theme_options)
         self.theme_combobox.set(theme_options[0])
         self.theme_combobox.pack(pady=10)
@@ -275,18 +275,21 @@ class GameConfigWindow(tk.Toplevel):
             imagesPath = listdir(mypath)
             if theme == "Cartoon":
                 imageChoice = ["bugs bunny.jpeg", "donald.png", "felix.jpg"]
-                print("Cartoon")
+                path = join(mypath, rd.choice(imageChoice))
             elif theme == "Travel":
                 imageChoice = ["EffeilTower.png"]
-                print("Travel")
+                path = join(mypath, rd.choice(imageChoice))
             elif theme == "Animals":
                 imageChoice = ["panda.webp", "scooby doo.jpg", "taz_300_300.jpg"]
-                print("Animal")
+                path = join(mypath, rd.choice(imageChoice))
+            elif theme == "Custom":
+                root = tk.Tk()
+                root.withdraw()  # Hide the main window
+                path = filedialog.askopenfilename(title="Select a file")
             else:
                 imageChoice = imagesPath
-                print("Random")
-                
-            path = join(mypath, rd.choice(imageChoice))
+                path = join(mypath, rd.choice(imageChoice))
+
             print(path)
 
             if theme == "FIPA2024":
@@ -300,7 +303,6 @@ class GameConfigWindow(tk.Toplevel):
 
     def exit_config(self):
         self.destroy()
-
 
 if __name__ == "__main__":
     hanjie_homepage = HanjieHomePage()
