@@ -1,8 +1,10 @@
 import random
 import tkinter as tk
 
-# Return one case not found yet
-def hint_position(grid, player_cases):
+def hint_position(grid, player_cases) -> list:
+    """
+    Return one case not found yet
+    """
     correct_positions = grid_to_positions(grid)
     player_positions = grid_to_positions(player_cases)
     possible_hints = [position for position in correct_positions if position not in player_positions]
@@ -12,8 +14,10 @@ def hint_position(grid, player_cases):
     else:
         return []
 
-# Return a list with all the positions of the squares to find
-def grid_to_positions(grid):
+def grid_to_positions(grid) -> list:
+    """
+    Return a list with all the positions of the squares to find
+    """
     positions = []
     for i in range(len(grid)):
         for j in range(len(grid[i])):
@@ -21,7 +25,7 @@ def grid_to_positions(grid):
                 positions.append([j, i])
     return positions
 
-def handle_hint_click(cases, grid, buttons):
+def handle_hint_click(cases, grid, buttons) -> None:
     hint = hint_position(grid, cases)
     #vérifier que hint est de la forme [x,y]
     if len(hint) == 0:

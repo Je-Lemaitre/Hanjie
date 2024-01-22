@@ -10,9 +10,11 @@ MAX_SIZE_HEIGHT = 15
 DEFAULT_WIDTH = 5
 DEFAULT_HEIGHT = 5
 
-EASY_GRID_SIZE = 10
-MEDIUM_GRID_SIZE = 15
-DIFFICULT_GRID_SIZE = 20
+# Grid size according level
+
+EASY_GRID_SIZE = 5
+MEDIUM_GRID_SIZE = 10
+DIFFICULT_GRID_SIZE = 15
 HARD_GRID_SIZE = 25
 
 
@@ -22,6 +24,7 @@ class GridBoardSelectionWindow(tk.Toplevel):
         self.title("Grid board selection")
         self.width = 5
         self.height = 5
+        self.resizable(False, False)
 
 
         """
