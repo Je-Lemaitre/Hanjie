@@ -20,9 +20,9 @@ from binarise import convertToGrid
 
 # Grid size according level
 
-EASY_GRID_SIZE = 10
-MEDIUM_GRID_SIZE = 15
-DIFFICULT_GRID_SIZE = 20
+EASY_GRID_SIZE = 5
+MEDIUM_GRID_SIZE = 10
+DIFFICULT_GRID_SIZE = 15
 HARD_GRID_SIZE = 25
 
 class HanjieHomePage(tk.Tk):
@@ -214,7 +214,7 @@ class GameConfigWindow(tk.Toplevel):
             new_width = MEDIUM_GRID_SIZE
             new_height = MEDIUM_GRID_SIZE
         elif current_value == "Hard":
-            new_width = HARD_GRID_SIZE
+            new_width = 15
             new_height = HARD_GRID_SIZE
         self.width_entry.delete(0, tk.END)
         self.width_entry.insert(0, new_width)
