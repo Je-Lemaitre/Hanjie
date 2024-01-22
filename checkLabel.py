@@ -1,4 +1,4 @@
-def checkLabel(grid):
+def checkLabel(grid : list) -> tuple:
 
     labelsX = []
     labelsY = []

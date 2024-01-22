@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog
 
-def loadImage():
+def loadImage() -> str:
+    """
+    Let the user choose a picture and return the filePath
+    """
     root = tk.Tk()
     root.withdraw()
 
