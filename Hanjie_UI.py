@@ -14,7 +14,7 @@ from generateGrid import generateGrid
 from checkLabel import checkLabel
 from display import display
 from loadImage import loadImage
-from binarise import binarise, showBinarizedImage, convert_to_grid
+from binarise import binarise
 from binarise import convertToGrid
 
 
@@ -84,8 +84,6 @@ class HanjieHomePage(tk.Tk):
 
     def start_game(self, grid):
 
-        print(f"start game : grid {type(grid                 )}")
-
         player_name = self.pseudo_entry.get()
         if not player_name:
             messagebox.showerror("Error", "Please enter your username before starting the game.")
@@ -98,7 +96,6 @@ class HanjieHomePage(tk.Tk):
         self.update_last_results()
 
         labelsX, labelsY = checkLabel(grid)
-
         for row in grid: print(row)
 
         window = tk.Tk()
@@ -176,7 +173,6 @@ class GameConfigWindow(tk.Toplevel):
         launch_random = tk.Button(
             self, text="Launch Random", command=lambda: self.launch_game(False), width=20, height=2, bg="lime"
         )
-
         launch_random.pack(pady=10)
 
         # Create a frame to display the grid
@@ -194,7 +190,6 @@ class GameConfigWindow(tk.Toplevel):
         launch_button = tk.Button(
             self, text="Launch Picture", command=lambda: self.launch_game(True), width=20, height=2, bg="lime"
         )
-
         launch_button.pack(pady=10)
 
         exit_config_button = tk.Button(
@@ -202,10 +197,6 @@ class GameConfigWindow(tk.Toplevel):
         )
         exit_config_button.pack(pady=10)
 
-    def show_binarizedImage_Dialog(self):
-        config_window = GameConfigWindow(self)
-        config_window.focus_force()
-        config_window.wait_window()
 
     def update_difficulty(self, action):
         current_value = self.difficulty_combobox.get()
@@ -272,19 +263,12 @@ class GameConfigWindow(tk.Toplevel):
             path = join(mypath, rd.choice(imageChoice))
             print(path)
 
-            # grid = binarise(path) # old version (arthur original function)
-            print("before grid generation and show binarized image")
-            grid = showBinarizedImage(path)
-            # TODO - go to class to binarized image
-            # binarizedImage_Dialog(parent=self, image_path=path)
-            print("grid from image generated!")
-
-            #img = cv.imread(cv.samples.findFile(path))
-            #grid = convertToGrid(img)
+            if theme == "FIPA2024":
+                grid = [['x', ' ', 'x', ' ', 'x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' '], ['x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', ' '], [' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', 'x', ' ', ' ', 'x', ' ', ' '], ['x', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', 'x', 'x'], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], ['x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', ' ', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', ' ', 'x', ' ', ' '], ['x', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', ' ', ' ', 'x', ' ', ' ', ' ', 'x'], ['x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', 'x', 'x', ' ', ' ', ' ', 'x', ' ', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x']]
+            else: grid = binarise(path)
 
         else:
             grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.68)
-
 
         self.master.start_game(grid)
         self.destroy()
