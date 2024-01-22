@@ -9,13 +9,13 @@ from os.path import join
 import random as rd
 
 import cv2 as cv
+import json
 
 from generateGrid import generateGrid
 from checkLabel import checkLabel
-from checkLabel import checkLabel
 from display import display
 from loadImage import loadImage
-from hanjie import showBinarizedImage, convert_to_grid
+from binarise import binarise
 from binarise import convertToGrid
 
 
@@ -42,7 +42,7 @@ class HanjieHomePage(tk.Tk):
         description_text = (
             "Hanjie, also known as Nonograms or Griddlers, is a logic puzzle game. "
             "The goal is to reveal a hidden picture by painting the correct cells on a grid. "
-            "Solve puzzles of varying difficulty and enjoy the challenge !"
+            "Solve puzzles of varying difficulty and enjoy the challenge!"
         )
         description_label = tk.Label(self, text=description_text, font=("Helvetica", 14), wraplength=600)
         description_label.pack(pady=20)
@@ -69,12 +69,15 @@ class HanjieHomePage(tk.Tk):
 
         self.last_results_labels = []
 
-        self.last_results = [
-            {"date": "2023-01-01 09:00", "player": "Donald", "result": 650},
-            {"date": "2023-01-02 09:00", "player": "Mickey", "result": 800},
-            {"date": "2023-01-03 09:00", "player": "Felix", "result": 640},
+        with open("results.json", 'r') as json_file:
+            self.last_results = json.load(json_file)
+
+        """self.last_results = [
+            {"date": "2023-01-01 09:00", "player": "Donald", "grid size": (5, 5), "time": 20, "help used": 2},
+            {"date": "2023-01-01 09:00", "player": "Mickey", "grid size": (15, 10), "time": 100, "help used": 6},
+            {"date": "2023-01-01 09:00", "player": "Felix", "grid size": (15, 25), "time": 90, "help used": 0},
             # ... To be replaced by results stored in a csv or json file?
-        ]
+        ]"""
 
         self.update_last_results()
 
@@ -83,9 +86,11 @@ class HanjieHomePage(tk.Tk):
         config_window.focus_force()
         config_window.wait_window()
 
-    def start_game(self, grid):
+    def save_results_to_json(self):
+        with open("results.json", 'w') as json_file:
+            json.dump(self.last_results, json_file, indent=2)
 
-        print(f"start game : grid {type(grid                 )}")
+    def start_game(self, grid):
 
         player_name = self.pseudo_entry.get()
         if not player_name:
@@ -95,17 +100,21 @@ class HanjieHomePage(tk.Tk):
         result = 1000
         date = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-        self.last_results.append({"date": date, "player": player_name, "result": result})
-        self.update_last_results()
-
         labelsX, labelsY = checkLabel(grid)
+        #for row in grid: print(row)
 
-        for row in grid: print(row)
+        time_used, help_used, game_won = display(grid, labelsX, labelsY, 1)
 
-        window = tk.Tk()
-        window.title("Hanjie Game")
-        display(window, grid, labelsX, labelsY, 1)
-        window.destroy()
+        if(game_won):
+            self.last_results.append({"date": date, "player": player_name, "grid size": (len(labelsX), len(labelsY)), "time": time_used, "help used":help_used})
+            self.update_last_results()
+            self.save_results_to_json()
+
+            print("GAME WON!!")
+            print("Grid size :", len(labelsX), len(labelsY))
+            print("Time      :", time_used)
+            print("Hints     :", help_used)
+            if(len(labelsX) == 15 and len(labelsY) == 25 and help_used == 0): print("Want some secrets? Write 'FIPA2024'")
 
     def exit_game(self):
         self.destroy()
@@ -115,14 +124,26 @@ class HanjieHomePage(tk.Tk):
             label.destroy()
 
         self.last_results_labels = []
+        sorted_results = sorted(self.last_results, key=lambda res: (res["grid size"][0] * res["grid size"][1], -res["time"]), reverse=True)
 
-        sorted_results = sorted(self.last_results, key=lambda res: res["result"], reverse=True)
+        for i, result in enumerate(sorted_results[:5]):
+            player_name = result['player'][:12] + '...' if len(result['player']) > 12 else result['player']
+            date = result['date'][:25] + '...' if len(result['date']) > 25 else result['date']
+            time_str = str(result['time'])[:15]  # Adjust the width as needed
 
-        for i, result in enumerate(sorted_results[-10:]):
-            result_label = tk.Label(
-                self,
-                text=f"{i + 1}. Player: {result['player']} \t Date: {result['date']} \t Result: {result['result']}"
+            # Add spaces to player_name to make it exactly 15 characters
+            player_name += " " * (15 - len(player_name))
+
+            text = (
+                f"{i + 1}. "
+                f"Player: {player_name} "
+                f"Date: {date.ljust(25)} "
+                f"Grid size: {result['grid size']} "
+                f"Time: {time_str.ljust(15)} "
+                f"Help used: {result['help used']}"
             )
+
+            result_label = tk.Label(text=text)
             result_label.pack(anchor="w", padx=20)
             self.last_results_labels.append(result_label)
 
@@ -177,7 +198,6 @@ class GameConfigWindow(tk.Toplevel):
         launch_random = tk.Button(
             self, text="Launch Random", command=lambda: self.launch_game(False), width=20, height=2, bg="lime"
         )
-
         launch_random.pack(pady=10)
 
         # Create a frame to display the grid
@@ -195,7 +215,6 @@ class GameConfigWindow(tk.Toplevel):
         launch_button = tk.Button(
             self, text="Launch Picture", command=lambda: self.launch_game(True), width=20, height=2, bg="lime"
         )
-
         launch_button.pack(pady=10)
 
         exit_config_button = tk.Button(
@@ -203,10 +222,6 @@ class GameConfigWindow(tk.Toplevel):
         )
         exit_config_button.pack(pady=10)
 
-    def show_binarizedImage_Dialog(self):
-        config_window = GameConfigWindow(self)
-        config_window.focus_force()
-        config_window.wait_window()
 
     def update_difficulty(self, action):
         current_value = self.difficulty_combobox.get()
@@ -270,29 +285,18 @@ class GameConfigWindow(tk.Toplevel):
             else:
                 imageChoice = imagesPath
                 print("Random")
+                
             path = join(mypath, rd.choice(imageChoice))
             print(path)
 
-            # grid = binarise(path) # old version (arthur original function)
-            print("before grid generation and show binarized image")
-            grid = showBinarizedImage(path)
-            # self.master.start_game(grid)
-            # TODO - go to class to binarized image
-            # binarizedImage_Dialog(parent=self, image_path=path)
-            # print("grid from image generated!")
-
-            #img = cv.imread(cv.samples.findFile(path))
-            #grid = convertToGrid(img)
+            if theme == "FIPA2024":
+                grid = [['x', ' ', 'x', ' ', 'x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' '], ['x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', ' '], [' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', 'x', ' ', ' ', 'x', ' ', ' '], ['x', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', 'x', 'x'], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], ['x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', ' ', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', ' ', 'x', ' ', ' '], ['x', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', ' ', ' ', 'x', ' ', ' ', ' ', 'x'], ['x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', 'x', 'x', ' ', ' ', ' ', 'x', ' ', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x']]
+            else: grid = binarise(path)
 
         else:
             grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.68)
 
-
-        labelsX, labelsY = checkLabel(grid)
-
-        display(grid, labelsX, labelsY, 1)
-        #self.master.start_game(grid)
-        self.destroy()
+        self.master.start_game(grid)
 
     def exit_config(self):
         self.destroy()

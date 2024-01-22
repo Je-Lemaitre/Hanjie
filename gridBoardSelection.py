@@ -10,12 +10,10 @@ MAX_SIZE_HEIGHT = 15
 DEFAULT_WIDTH = 5
 DEFAULT_HEIGHT = 5
 
-# Grid size according level
-
 EASY_GRID_SIZE = 5
 MEDIUM_GRID_SIZE = 10
-DIFFICULT_GRID_SIZE = 15
-HARD_GRID_SIZE = 25
+HARD_GRID_SIZE = 15
+HARDCORE_GRID_SIZE = 25
 
 
 class GridBoardSelectionWindow(tk.Toplevel):
@@ -24,8 +22,8 @@ class GridBoardSelectionWindow(tk.Toplevel):
         self.title("Grid board selection")
         self.width = 5
         self.height = 5
-        self.resizable(False, False)
-
+        self.scale1 = None
+        self.scale2 = None
 
         """
         Frame declaration
@@ -84,11 +82,11 @@ class GridBoardSelectionWindow(tk.Toplevel):
                                  command=self.set_cursors_value)
         radio2.pack(anchor="w")
 
-        radio3 = ttk.Radiobutton(frame_radio, text="Difficult", variable=self.radio_var, value="Difficult",
+        radio3 = ttk.Radiobutton(frame_radio, text="Hard", variable=self.radio_var, value="Hard",
                                  command=self.set_cursors_value)
         radio3.pack(anchor="w")
 
-        radio4 = ttk.Radiobutton(frame_radio, text="Hard", variable=self.radio_var, value="Hard",
+        radio4 = ttk.Radiobutton(frame_radio, text="Hardcore", variable=self.radio_var, value="Hardcore",
                                  command=self.set_cursors_value)
         radio4.pack(anchor="w")
 
@@ -119,17 +117,17 @@ class GridBoardSelectionWindow(tk.Toplevel):
         elif selected_option == "Medium":
             self.scale1.set(MEDIUM_GRID_SIZE)
             self.scale2.set(MEDIUM_GRID_SIZE)
-        elif selected_option == "Difficult":
-            self.scale1.set(DIFFICULT_GRID_SIZE)
-            self.scale2.set(DIFFICULT_GRID_SIZE)
         elif selected_option == "Hard":
             self.scale1.set(HARD_GRID_SIZE)
             self.scale2.set(HARD_GRID_SIZE)
+        elif selected_option == "Hardcore":
+            self.scale1.set(HARDCORE_GRID_SIZE)
+            self.scale2.set(HARDCORE_GRID_SIZE)
 
         rows = int(self.scale1.get())
         columns = int(self.scale2.get())
 
-        print(f"rows : {rows} and columns : {columns}")
+        # print(f"rows : {rows} and columns : {columns}")
 
         self.label_value_height.config(text=str(int(self.scale1.get())))
         self.label_value_width.config(text=str(int(self.scale2.get())))
@@ -138,8 +136,11 @@ class GridBoardSelectionWindow(tk.Toplevel):
     def update_table(self):
         self.canvas.delete("all")
 
-        rows = int(self.scale1.get())
-        columns = int(self.scale2.get())
+        rows, columns = 0, 0
+        if self.scale1 is not None:
+            rows = int(self.scale1.get())
+        if self.scale2 is not None:
+            columns = int(self.scale2.get())
 
         # print(f"rows : {rows} and columns : {columns}")
 
@@ -158,8 +159,10 @@ class GridBoardSelectionWindow(tk.Toplevel):
         self.destroy()
 
     def validate_gridSize(self):
-        self.height = int(self.scale1.get())
-        self.width = int(self.scale2.get())
+        if self.scale1 is not None:
+            self.height = int(self.scale1.get())
+        if self.scale2 is not None:
+            self.width = int(self.scale2.get())
         self.destroy()
 
 
