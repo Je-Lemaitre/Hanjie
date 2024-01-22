@@ -2,7 +2,7 @@ import tkinter as tk
 from checkLabel import checkLabel
 
 win = False
-WIDTH_FACTOR = 1
+WIDTH_FACTOR = 2
 HEIGHT_FACTOR = 1
 
 # Function to handle the click on a case

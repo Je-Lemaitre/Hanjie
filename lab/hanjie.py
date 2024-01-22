@@ -45,16 +45,25 @@ def convert_to_grid(image_array):
 
 def showBinarizedImage(image_path):
     original_image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
+    initial_image_height, initial_image_width = original_image.shape[:2]
+    image_ratio = initial_image_width/initial_image_height
+
+    max_grid_size = 25
+    max_image_size = max(initial_image_height,initial_image_width)
+    if max_image_size==initial_image_height :
+        initial_image_size = (int(image_ratio*max_grid_size), max_grid_size)
+    else :
+        initial_image_size = (max_grid_size, int(max_grid_size/image_ratio))
+
 
     _, binarized_image = cv.threshold(original_image, 128, 255, cv.THRESH_BINARY) 
 
-    initial_display_size = (150, 150)
     window = tk.Toplevel()
     window.title("Binarized Image")
 
-    tk_image = ImageTk.PhotoImage(Image.fromarray(cv.resize(binarized_image, initial_display_size)))
+    tk_image = ImageTk.PhotoImage(Image.fromarray(cv.resize(binarized_image, initial_image_size)))
 
-    image_label = tk.Label(window, image=tk_image, width=initial_display_size[0], height=initial_display_size[1])
+    image_label = tk.Label(window, image=tk_image, width=initial_image_size[0], height=initial_image_size[1])
     image_label.pack(side=tk.LEFT, padx=10, pady=10)
 
     # Cursors frame
@@ -65,7 +74,7 @@ def showBinarizedImage(image_path):
     size_label = tk.Label(cursors_frame, text="Image Size:")
     size_label.pack()
     size_scale = tk.Scale(cursors_frame, from_=5, to=25, orient=tk.HORIZONTAL, command=lambda x: update_image())
-    size_scale.set(initial_display_size[0])
+    size_scale.set(25)
     size_scale.pack()
 
     # Slider to adjust the binarization intensity
@@ -85,8 +94,8 @@ def showBinarizedImage(image_path):
     # Slider to adjust the display size
     disp_size_label = tk.Label(cursors_frame, text="Display size:")
     disp_size_label.pack()
-    disp_size_scale = tk.Scale(cursors_frame, from_=1, to=20, orient=tk.HORIZONTAL, command=lambda x: update_image())
-    disp_size_scale.set(4)
+    disp_size_scale = tk.Scale(cursors_frame, from_=1, to=121, orient=tk.HORIZONTAL, command=lambda x: update_image())
+    disp_size_scale.set(24)
     disp_size_scale.pack()
 
     # Callback function for updating the image based on slider values
@@ -97,13 +106,14 @@ def showBinarizedImage(image_path):
         new_size = size_scale.get()
         new_intensity = intensity_scale.get()
         new_erosion_size = erosion_scale.get()
-        resize_factor = disp_size_scale.get()/4
-        new_display_size = (int(150*resize_factor), int(150*resize_factor))
+        resize_display_factor = disp_size_scale.get()/4
+        new_display_size = (int(initial_image_size[0]*resize_display_factor), int(initial_image_size[1]*resize_display_factor))
 
         kernel = cv.getStructuringElement(cv.MORPH_RECT, (new_erosion_size, new_erosion_size),(-1,-1))
         eroded_image = cv.erode(binarized_image, kernel)
 
-        resized_image = cv.resize(eroded_image, (new_size, new_size))
+        resized_image_factor = new_size/max_grid_size
+        resized_image = cv.resize(eroded_image, (int(resized_image_factor*initial_image_size[0]), int(resized_image_factor*initial_image_size[1])))
 
         # Adjust the binarization intensity
         _, adjusted_image = cv.threshold(resized_image, new_intensity, 255, cv.THRESH_BINARY)
