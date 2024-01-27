@@ -26,7 +26,7 @@ To get the same working environment and try out the development version, follow 
   sudo apt-get install python3-tk
   ```
 
-### 2. Clone the repersitory
+### 2. Clone the repository
 
 ```bash
 git clone https://github.com/Je-Lemaitre/Hanjie.git
