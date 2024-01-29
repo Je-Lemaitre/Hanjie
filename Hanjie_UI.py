@@ -8,22 +8,30 @@ from os import listdir
 from os.path import join
 import random as rd
 
-import cv2 as cv
 import json
 
 from generateGrid import generateGrid
 from checkLabel import checkLabel
 from display import display
-from loadImage import loadImage
-from binarise import binarise
-from binarise import convertToGrid
+from binarise import showBinarizedImage
 
+
+EASY_GRID_SIZE = 5
+MEDIUM_GRID_SIZE = 10
+DIFFICULT_GRID_SIZE = 15
+HARD_GRID_SIZE = 25
 
 class HanjieHomePage(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Hanjie - Puzzle Game")
         self.geometry("800x700")
+
+        photo = tk.PhotoImage(file = "hanjie_image.png")
+        self.wm_iconphoto(False, photo)
+        self.iconbitmap("hanjie_image.png")
+        self.resizable(False, False)
+
 
         # Header with Title and Image
         game_image = Image.open("pictures/donald.png").resize((50, 50))
@@ -90,7 +98,7 @@ class HanjieHomePage(tk.Tk):
         with open("results.json", 'w') as json_file:
             json.dump(self.last_results, json_file, indent=2)
 
-    def start_game(self, grid):
+    def start_game(self, grid : list):
 
         player_name = self.pseudo_entry.get()
         if not player_name:
@@ -152,12 +160,13 @@ class GameConfigWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title("Game Configuration")
-        self.geometry("450x600")
+        self.geometry("500x600")
+        self.resizable(False, False)
 
         difficulty_label = tk.Label(self, text="Select Difficulty:", font=("Helvetica", 12))
         difficulty_label.pack(pady=5)
 
-        difficulty_options = ["Easy", "Medium", "Hard"]
+        difficulty_options = ["Easy", "Medium", "Difficult", "Hard"]
         self.difficulty_combobox = ttk.Combobox(self, values=difficulty_options)
         self.difficulty_combobox.set(difficulty_options[0])
         self.difficulty_combobox.pack(pady=10)
@@ -226,18 +235,21 @@ class GameConfigWindow(tk.Toplevel):
     def update_difficulty(self, action):
         current_value = self.difficulty_combobox.get()
         if current_value == "Easy":
-            new_width = 5
-            new_height = 5
+            new_width = EASY_GRID_SIZE
+            new_height = EASY_GRID_SIZE
         elif current_value == "Medium":
-            new_width = 10
-            new_height = 5
+            new_width = MEDIUM_GRID_SIZE
+            new_height = MEDIUM_GRID_SIZE - 5
+        elif current_value == "Difficult":
+            new_width = DIFFICULT_GRID_SIZE
+            new_height = DIFFICULT_GRID_SIZE - 5
         elif current_value == "Hard":
-            new_width = 15
-            new_height = 10
+            new_width = HARD_GRID_SIZE
+            new_height = HARD_GRID_SIZE - 5
+
         self.width_entry.delete(0, tk.END)
         self.width_entry.insert(0, new_width)
         self.height_entry.delete(0, tk.END)
-        self.height_entry.insert(0, new_height)
 
     def update_width(self, action):
         current_value = self.width_entry.get()
@@ -294,7 +306,7 @@ class GameConfigWindow(tk.Toplevel):
 
             if theme == "FIPA2024":
                 grid = [['x', ' ', 'x', ' ', 'x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' '], ['x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', ' '], [' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', 'x', ' ', ' ', 'x', ' ', ' '], ['x', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', 'x', 'x'], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], ['x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', ' ', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', ' ', 'x', ' ', ' '], ['x', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x'], ['x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', ' ', 'x', ' ', 'x', ' ', ' ', ' ', 'x', ' ', ' ', ' ', 'x'], ['x', 'x', 'x', ' ', 'x', ' ', 'x', ' ', 'x', 'x', ' ', ' ', ' ', 'x', ' ', 'x', ' ', 'x', 'x', 'x', ' ', 'x', 'x', 'x']]
-            else: grid = binarise(path)
+            else: grid = showBinarizedImage(image_path=path)
 
         else:
             grid = generateGrid(int(self.width_entry.get()), int(self.height_entry.get()), 0.68)

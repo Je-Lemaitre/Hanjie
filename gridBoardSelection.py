@@ -24,6 +24,7 @@ class GridBoardSelectionWindow(tk.Toplevel):
         self.height = 5
         self.scale1 = None
         self.scale2 = None
+        self.resizable(False, False)
 
         """
         Frame declaration
