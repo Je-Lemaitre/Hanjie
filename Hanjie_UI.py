@@ -250,6 +250,7 @@ class GameConfigWindow(tk.Toplevel):
         self.width_entry.delete(0, tk.END)
         self.width_entry.insert(0, new_width)
         self.height_entry.delete(0, tk.END)
+        self.height_entry.insert(0, new_height)
 
     def update_width(self, action):
         current_value = self.width_entry.get()
